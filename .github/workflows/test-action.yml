@@ -1,17 +1,36 @@
-name: Test Action
+name: Cache CI Example
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:  # allows manual triggering
+  workflow_dispatch:  # manual trigger
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: 23f2003825@ds.study.iitm.ac.in
-        run: echo "Hello, world!"
+      # Cache dependencies
+      - name: prime-cache-bac4370
+        id: cache-step
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+          key: cache-bac4370
+
+      - name: Show cache result
+        run: |
+          if [ "${{ steps.cache-step.outputs.cache-hit }}" == "true" ]; then
+            echo "Cache hit!"
+          else
+            echo "Cache miss!"
+          fi
+
+      # Example step: install a Python package
+      - name: Install dependencies
+        run: pip install requests
